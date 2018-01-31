@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Example usage:
+#
+# docker/release-docker -h docker.io/istio \
+#  -t $(git rev-parse --short HEAD),$(date +%Y%m%d%H%M%S),latest"
+
+set -e
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source ${ROOT}/../bin/docker_lib.sh
+
+IMAGES=()
+
+cd ${ROOT}; make docker
+
+IMAGES+=(broker)
+
+# Tag and push
+tag_and_push "${IMAGES[@]}"

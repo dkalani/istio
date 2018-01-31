@@ -22,6 +22,7 @@ export BUILDINFO
 pilot/bin/push-docker -hub ${HUB} -tag ${TAG} &
 mixer/bin/push-docker -hub ${HUB} -tag ${TAG} &
 security/bin/push-docker -hub ${HUB} -tag ${TAG} &
+broker/bin/push-docker -hub ${HUB} -tag ${TAG} &
 
 # Permit $HUB overrides to suppress errors during push
 if [[ "${HUB}" =~ ^gcr\.io ]]; then

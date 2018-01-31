@@ -1,0 +1,3 @@
+FROM scratch
+ADD broker /usr/local/bin
+ENTRYPOINT ["/usr/local/bin/broker"]

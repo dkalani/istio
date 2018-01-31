@@ -206,7 +206,11 @@ node-agent: depend
 istio-ca: depend
 	bin/gobuild.sh ${GO_TOP}/bin/istio_ca istio.io/istio/security/cmd/istio_ca/version ./security/cmd/istio_ca
 
-go-build: pilot istioctl pilot-agent sidecar-initializer mixs mixc node-agent istio-ca
+.PHONY: broker
+broker: depend
+	bin/gobuild.sh ${GO_TOP}/bin/broker istio.io/istio/broker/pkg/version ./broker/cmd/brks
+
+go-build: pilot istioctl pilot-agent sidecar-initializer mixs mixc node-agent istio-ca broker
 
 #-----------------------------------------------------------------------------
 # Target: go test
@@ -300,6 +304,7 @@ docker:
 	time $(ISTIO_GO)/security/bin/push-docker ${hub} ${tag} -build-only
 	time $(ISTIO_GO)/mixer/bin/push-docker ${hub} ${tag} -build-only
 	time $(ISTIO_GO)/pilot/bin/push-docker ${hub} ${tag} -build-only
+	time $(ISTIO_GO)/broker/bin/push-docker ${hub} ${tag} -build-only
 
 # Build docker images for pilot, mixer, ca using prebuilt binaries
 docker.prebuilt:
@@ -323,6 +328,8 @@ docker.prebuilt:
 	security/bin/gen-keys.sh
 	time (cd security/docker && docker build -t ${HUB}/istio-ca-test:${TAG} -f Dockerfile.istio-ca-test .)
 	time (cd security/docker && docker build -t ${HUB}/node-agent-test:${TAG} -f Dockerfile.node-agent-test .)
+	cp ${GOTOP}/bin/broker broker/docker
+	time (cd broker/docker && docker build -t ${HUB}/broker:${TAG} -f Dockerfile.broker .)
 
 
 push: checkvars clean.installgen installgen
